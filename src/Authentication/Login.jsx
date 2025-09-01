@@ -9,28 +9,23 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { loginAsAdmin } = useAuth();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // 🔑 Try admin login first
-      const adminResult = await loginAsAdmin(email, password);
-      if (adminResult.success) {
-        toast.success("Welcome Admin!");
-        navigate("/admin-dashboard", { replace: true });
-        return;
-      }
-
-      // 🔑 If not admin, do normal Firebase login
-      // (use Firebase Auth directly OR create a `loginAsUser` helper in AuthContext)
+      await login(email, password);
+      // The onAuthStateChanged listener in AuthContext will handle the redirect.
+      // We can navigate to a default loading page or just wait.
+      // For simplicity, we'll let the router in App.jsx handle the redirect
+      // after the user state is updated.
       toast.success("Login successful!");
-      navigate("/bookings", { replace: true });
+      // The navigation will be handled by the main App component based on user role.
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Invalid email or password!");
+      toast.error(error.message || "Invalid email or password!");
     } finally {
       setIsLoading(false);
     }
