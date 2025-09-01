@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 import Login from "./Authentication/Login";
 import Bookings from "./Pages/Bookings";
 import ApprovedVisas from "./Pages/ApprovedVisas";
@@ -11,20 +11,7 @@ import Reports from "./Pages/Reports";
 import AdminLogin from "./Pages/AdminLogin";
 import AdminDashboard from "./Pages/AdminDashboard";
 import Navbar from "./Components/Navbar";
-
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  return user ? children : <Navigate to="/login" />;
-};
+import ProtectedRoute from "./Components/ProtectedRoute";
 
 function AppContent() {
   const { user, isAdmin } = useAuth();
@@ -112,10 +99,10 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <AppContent />
       <Toaster position="top-right" />
-    </AuthProvider>
+    </>
   );
 }
 

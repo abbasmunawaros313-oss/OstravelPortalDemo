@@ -82,13 +82,6 @@ export const AuthProvider = ({ children }) => {
     try {
       checkRateLimit();
 
-      // ✅ Hardcoded admin login bypass (no Firebase needed)
-      if (email === "adminos@gmail.com" && password === "ospk123") {
-        setUser({ email, uid: "local-admin" });
-        setIsAdmin(true);
-        return { success: true };
-      }
-
       // ✅ Otherwise use Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
