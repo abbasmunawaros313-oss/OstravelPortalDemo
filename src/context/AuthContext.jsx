@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(true);
 
   // Track login attempts (rate limiting)
   const loginAttempts = useRef(0);
@@ -43,8 +44,10 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser || null);
+      setLoading(false); // Auth state is known now
 
       if (firebaseUser) {
+        setIsAdminLoading(true);
         try {
           // Check Firestore for admin role
           const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
@@ -61,12 +64,13 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           console.error("Error checking admin status:", error);
           setIsAdmin(false);
+        } finally {
+          setIsAdminLoading(false);
         }
       } else {
         setIsAdmin(false);
+        setIsAdminLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -109,7 +113,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, isAdmin, loginAsAdmin }}>
+    <AuthContext.Provider value={{ user, loading, logout, isAdmin, loginAsAdmin, isAdminLoading }}>
       {children}
     </AuthContext.Provider>
   );

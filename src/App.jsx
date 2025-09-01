@@ -14,7 +14,15 @@ import Navbar from "./Components/Navbar";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 function AppContent() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isAdminLoading } = useAuth();
+
+  if (isAdminLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   if (isAdmin) {
     return (
